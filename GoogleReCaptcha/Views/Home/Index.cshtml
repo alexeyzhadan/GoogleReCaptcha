@@ -1,0 +1,33 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using GoogleReCaptcha.Models
+@using Microsoft.Extensions.Options
+@inject IOptions<ReCaptchaSettings> _settings
+@model Person
+
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="FirstName"></label>
+        <input asp-for="FirstName" />
+        <span asp-validation-for="FirstName"></span>
+    </div>
+    <div>
+        <label asp-for="LastName"></label>
+        <input asp-for="LastName" />
+        <span asp-validation-for="LastName"></span>
+    </div>
+    <input asp-for="Token" type="hidden"/>
+    <div>
+        <input type="submit" value="Create" onclick="onClick(this)" />
+    </div>
+</form>
+
+<script src="https://www.google.com/recaptcha/api.js?render=@_settings.Value.SiteKey"></script>
+<script>
+    grecaptcha.ready(function () {
+        grecaptcha.execute('@_settings.Value.SiteKey', { action: 'submit' }).then(function (token) {
+            let tokenInput = document.getElementById("Token");
+            tokenInput.value = token;
+        });
+    });
+</script>
